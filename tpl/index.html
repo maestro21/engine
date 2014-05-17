@@ -1,0 +1,97 @@
+<html>
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+<script language="javascript" src="<?=BASE_PATH;?>ajax.js"></script>
+<script language="javascript"><?=stpl('functions.js');?></script>
+<LINK REL=StyleSheet HREF="<?=BASE_PATH;?>style.css" TYPE="text/css" MEDIA=screen>
+<script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
+<style>
+<?=str_replace('{path}',$path,G('css'));?>
+</style>
+</head>
+<body>
+	<?php if(superAdmin()){ ?>	
+	<div class="adminbar"> 
+		<div class="wrap"><?=T('administration');?>:
+			<?php foreach ($modules as $module){ ?>
+				<a href="<?=$path.$module;?>"><?=T(trim($module));?></a>&nbsp;
+			<?}?>
+		</div>	
+	</div>	
+	<? } ?>
+	
+	<div class="head">
+		<div class="wrap">
+			<?php if(!$_SESSION['logged']){ ?>
+				<form id="userForm" method="POST" action="<?=BASE_PATH;?>users/login">
+				<div>
+					<table class="logtbl">
+						<tr>
+							<td id="logError">
+							
+							</td>
+						</tr>
+						<tr>
+							<td>	
+								<input name="form[email]" onfocus="empt(this,'<?=T('email');?>')" onblur="chk(this,'<?=T('email');?>')" value="<?=T('email');?>">&nbsp;
+							</td>
+							<td>
+								<input name="form[pass]" type="password" value="<?=T('pass');?>" onfocus="empt(this)" onblur="chk(this)">
+							</td>
+							<td>
+								<button class="btn" onclick="this.form.submit()"><?=T('login');?></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="gray">
+								<input type="checkbox" name="register"> <?=T('register');?>
+							</td>
+							<td class="gray">
+								<a href="<?=BASE_PATH;?>users/recover"><?=T('forgot pass');?></a><br>
+							</td>
+
+						</tr>
+					</tr>
+				</table></div> </form>
+				<?}else{ ?>
+					<div id="userForm" class="logged">
+						<a href="#" onclick="showHide('dropdownmenu')"><img src="<?=BASE_PATH;?>img/arr.png" align="absmiddle"><?=(@$_SESSION['user']['name']!=''?$_SESSION['user']['name']:$_SESSION['user']['email']);?></a><br>
+						<div id="dropdownmenu">
+							<a href="<?=BASE_PATH;?>users/logout"><?=T('exit');?></a><br>	
+							<a href="#"><?=T('settings');?></a><br>
+						</div>	
+					</div>
+			<?}?>
+			&nbsp; <h1><a href="<?=BASE_PATH;?>">Maestro engine</a></h1>
+		</div>
+	</div><?php if(superAdmin()){ ?>
+			<div class="subadmin">
+				<div class="wrap">
+					<b><a href="<?=BASE_PATH.$class?>"><?=T($class);?></a></b> /
+					<a href="#" onclick="conf('<?=$pre.$class?>/ini')"><?=T('ini');?></a> &nbsp; 
+					<a href="<?=BASE_PATH.$class?>/items"><?=T('list');?></a>  &nbsp; 
+					<a href="<?=BASE_PATH.$class?>/item/<?=$id;?>"><?=T('add');?></a> 
+					<input type="text" id="search" name="search" value="<?=$search;?>">
+					<button class="btn search"  onclick="doSearch('<?=$path.$class?>')"><?=T('search');?></button>
+				</div>	
+			</div>
+	<? } ?>
+	
+	<div class="content">	
+		<div class="wrap">
+			<?=$content;?>
+		</div>	
+	</div>
+
+	<div class="footer">
+		<div class="wrap">
+			<?php foreach ($langs as $lang){ ?>
+				<a href="<?=$path;?>filter/lang/<?=$lang['abbr'];?>"><?=$lang['name'];?></a> 	
+			<?}?>
+		</div>
+	</div>
+	
+
+</body>
+</html>
