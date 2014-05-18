@@ -39,9 +39,31 @@ Architecture
 
 Creating new module
 ------
+To create new module you should go to modules/ and add new module. Then you should set up it's fields. Every field has name, database type and widget separated by space. I.e. 'news_text text html' would create field in database with type text and would be editable as HTML textarea in module editing.
+Following database types supported:
+* int – would create integer field
+* text – would create TEXT field
+* float – would create FLOAT field
+* pass – would create TEXT field; would be MD5 encode
+* date – would create DATETIME 
+
+Following widgets supported:
+hidden – input type=hidden
+* text – input type=text
+* pass – input type=password
+* textarea – textarea
+* html – HTML edit_area textarea
+* checkbox - checkbox
+* select – select. Options can be set up in Masterclass getOptions method
+* radio - radio
+* multselect - multselect
+* date - date widget consisting of 6 small input fields
+
+After you are ready, save your module and click 'install'. Now you can edit it.
 
 Templates
 ------
+
 
 Functions
 ------
