@@ -36,6 +36,20 @@ While this is pure engine it contains only system modules:
 
 Architecture
 ------
+Maestro engine has Front controller index.php which calls class(model), passes data to it and echoes template(view)
+Classes are kept in 'classes' directory.
+Templates are kept in 'tpl' directory.
+Module fields are kept in 'ini' directory.
+
+Every class extends Masterclass who has all necessary functionality and variables for data processing and CRUD control. To write your own module you don't need to write it from scratch, you should just extend following Masterclass methods:
+* del - is called when you delete element. URL: module/del/id
+* save - is called when you save your element. URL: module/save/id .If you call URL without id, new element would be created. 
+* item - is called when you open your element for editing. URL: module/item/id
+* items - usually default method that basically lists your elements
+* view - is called when user views element. URL: module/view/id
+* extend - is virtual method that you can use to extend global logic of your class or set up some global values like options. 
+
+This structure is very agile and you can actually develop anything, even file manager which persists in this example.
 
 Creating new module
 ------
@@ -63,10 +77,61 @@ After you are ready, save your module and click 'install'. Now you can edit it.
 
 Templates
 ------
-
+Templates are kept in tpl folder. Unlike some frameworks like Zend, where there is a separate file for every method, our templates are class-based and exact view is returned depending from $do variable that we pass when calling template.
+Such approach gives some advantages:
+* there are less files. Imagine project with 20 modules with 10 methods each. You need 200 files then. Here you need only 20 which makes it easier to edit
+* when you create new module, you shouldn't create view for every method - you should just extend ones you need and call default template in any other case. Example:
+```php
+<?php switch($do){ 
+	case 'view': ?>
+	# your view
+	<? break;
+	default:
+		include('default.html');
+	break;
+}?>
+```
+While templates are parsed through OB library, you can execute any code in them. You can even load template in template or load class and execute it's method or execute SQL query! 
+Maestro engine is very agile.
 
 Functions
 ------
+Such automatization and agility are possible because there are lots of useful functions that do the job for you:
+
+Database functions:
+* DBconnect() – connects to your database based on your settings.
+* DBquery($sql) – executes SQL query. Analogue to mysql_query();
+* DBrow($sql) – returns associative array. Analogue of mysql_fetch_assoc();
+* DBcol($sql) – returns array of values of column. I.e. DBcol('SELECT name FROM table').
+* DBall($sql) – returns two-dimentional array. Analogue of pg_fetch_all() in PostgreSQL;
+* DBfield($sql) and DBcell($sql) – returns single cell. Analogue of mysql_result();
+* DBnumrows($sql) – returns number of affected rows. Analogue of mysql_num_rows();
+* DBinsertId() - returns inserted ID. Analogue of mysql_insert_id();
+* DBfields() - returns table fields.
+
+Template functions:
+* tpl($tpl, $params) - returns parsed template with name tpl/$tpl.html and params. After you pass params as array, they are preprocessed in a loop. Example: you pass array('var1' => 1, 'var2' => 2), you can echo them in your template as $var1 and $var2.
+
+Data processing and formating functions:
+* striprow(Array $arr) - loops array elements and removes backslaches;
+* parseString($string) - prepares string for database insert adding slashes and converting special entities;
+* drawForm ($fields,$data,$options) – draws HTML form based on module settings (see 'Creating new module'). $fields are fields of module you defined when you created it, $data is your POST data prepared in Masterclass in save method, $options are options for some types like 'select' defined in getOptions() method in Masterclass.
+* sqlFormat($type,$value) - formats $value to SQL format depending on it's database $type defined in module fields settings.
+* fDate($date) - returns prefortamed date. 
+* getGet($var) - returns variable from GET request.
+* getPost($var) - returns variable from POST request.
+* getAll($var) - returns variable from both requests.
+* inspect($data) - <pre>print_r($data)</pre>
+
+Other functions:
+* getVar($var) - gets Session variable;
+* setVar($var) - sets Session variable;
+* unsetVar($var) - unsets Session variable;
+* checkVar($var) - checks if Session variable;
+* getLang() - gets current language;
+* T($label) - echoes textlabel depending from language;
+* G($var) - echoes global variable which is set in Globals module.
 
 Conclusion
 ------
+Maestro engine is agile, lightweigt and automatized engine which allows you to develop your app very fast and comfortable with little code. 
